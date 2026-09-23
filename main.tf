@@ -21,6 +21,21 @@ locals {
   }
 
   provider_devices = module.model.devices
+
+  # IOS-XR >= 25.4 (provider CiscoDevNet PR #323): alcuni attributi cambiano schema YANG.
+  # Senza iosxr_version sul device → comportamento 24.4.
+  device_iosxr_ge_25_4 = { for device in local.devices :
+    device.name => try(
+      tonumber(split(".", device.iosxr_version)[0]) * 100 + tonumber(split(".", device.iosxr_version)[1]) >= 2504,
+      false
+    )
+  }
+
+  # Enum severity dei remote host rinominati in 25.4
+  logging_severity_25_4 = {
+    info  = "informational"
+    error = "errors"
+  }
 }
 
 provider "iosxr" {

@@ -87,9 +87,18 @@ resource "iosxr_logging" "logging" {
       match = try(filter_match.match, local.defaults.iosxr.devices.configuration.logging.events.filter_matches.match, null)
     }
   ]
-  source_interfaces = try(length(local.device_config[each.value.name].logging.source_interfaces) == 0, true) ? null : [
+  # 24.4: una voce per interfaccia con lista annidata vrfs
+  # 25.4: chiave composta (interfaccia, vrf) → una voce per coppia con vrf piatto
+  source_interfaces = try(length(local.device_config[each.value.name].logging.source_interfaces) == 0, true) ? null : local.device_iosxr_ge_25_4[each.value.name] ? [
+    for si in local.device_config[each.value.name].logging.source_interfaces : {
+      name = try(si.name, local.defaults.iosxr.devices.configuration.logging.source_interfaces.name)
+      vrf  = try(si.vrf, local.defaults.iosxr.devices.configuration.logging.source_interfaces.vrf)
+      vrfs = null
+    }
+    ] : [
     for iface_name, entries in { for si in local.device_config[each.value.name].logging.source_interfaces : try(si.name, local.defaults.iosxr.devices.configuration.logging.source_interfaces.name) => si... } : {
       name = iface_name
+      vrf  = null
       vrfs = [for e in entries : { name = try(e.vrf, local.defaults.iosxr.devices.configuration.logging.source_interfaces.vrf) }]
     }
   ]
@@ -131,8 +140,9 @@ locals {
           && can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", try(h.address, local.defaults.iosxr.devices.configuration.logging.hosts.address, ""))) == false
           ]) == 0, true) ? null : [for h in try(local.device_config[device.name].logging.hosts, []) : {
           name                    = try(h.address, local.defaults.iosxr.devices.configuration.logging.hosts.address, null)
-          severity                = try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
-          port                    = try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+          severity                = local.device_iosxr_ge_25_4[device.name] ? try(local.logging_severity_25_4[try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity)], try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)) : try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
+          port                    = local.device_iosxr_ge_25_4[device.name] ? null : try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+          udp_port                = local.device_iosxr_ge_25_4[device.name] ? try(tostring(try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port)), null) : null
           operator                = try(h.operator, local.defaults.iosxr.devices.configuration.logging.hosts.operator, null)
           facility                = try(h.facility, local.defaults.iosxr.devices.configuration.logging.hosts.facility, null)
           hostname_source_address = try(h.source_address, local.defaults.iosxr.devices.configuration.logging.hosts.source_address, null)
@@ -148,8 +158,9 @@ locals {
           ]) == 0, true) ? null : [
           for h in try(local.device_config[device.name].logging.hosts, []) : {
             ipv4_address        = try(h.address, local.defaults.iosxr.devices.configuration.logging.hosts.address, null)
-            severity            = try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
-            port                = try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+            severity            = local.device_iosxr_ge_25_4[device.name] ? try(local.logging_severity_25_4[try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity)], try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)) : try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
+            port                = local.device_iosxr_ge_25_4[device.name] ? null : try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+            udp_port            = local.device_iosxr_ge_25_4[device.name] ? try(tostring(try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port)), null) : null
             operator            = try(h.operator, local.defaults.iosxr.devices.configuration.logging.hosts.operator, null)
             facility            = try(h.facility, local.defaults.iosxr.devices.configuration.logging.hosts.facility, null)
             ipv4_source_address = try(h.source_address, local.defaults.iosxr.devices.configuration.logging.hosts.source_address, null)
@@ -164,8 +175,9 @@ locals {
           ]) == 0, true) ? null : [
           for h in try(local.device_config[device.name].logging.hosts, []) : {
             ipv6_address        = try(h.address, local.defaults.iosxr.devices.configuration.logging.hosts.address, null)
-            severity            = try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
-            port                = try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+            severity            = local.device_iosxr_ge_25_4[device.name] ? try(local.logging_severity_25_4[try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity)], try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)) : try(h.severity, local.defaults.iosxr.devices.configuration.logging.hosts.severity, null)
+            port                = local.device_iosxr_ge_25_4[device.name] ? null : try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port, null)
+            udp_port            = local.device_iosxr_ge_25_4[device.name] ? try(tostring(try(h.port, local.defaults.iosxr.devices.configuration.logging.hosts.port)), null) : null
             operator            = try(h.operator, local.defaults.iosxr.devices.configuration.logging.hosts.operator, null)
             facility            = try(h.facility, local.defaults.iosxr.devices.configuration.logging.hosts.facility, null)
             ipv6_source_address = try(h.source_address, local.defaults.iosxr.devices.configuration.logging.hosts.source_address, null)

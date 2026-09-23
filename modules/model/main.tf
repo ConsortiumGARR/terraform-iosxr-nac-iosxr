@@ -245,6 +245,8 @@ locals {
           host     = device.host
           protocol = try(device.protocol, null)
           managed  = try(device.managed, local.defaults.iosxr.devices.managed, true)
+          # Versione IOS-XR del device (es. "25.4") — seleziona lo schema per attributi version-specific
+          iosxr_version = try(tostring(device.iosxr_version), null)
           configuration = merge(
             { for k, v in try(local.devices_config[device.name], {}) : k => v if k != "interfaces" },
             {
