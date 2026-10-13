@@ -136,6 +136,7 @@ resource "iosxr_cli" "cli_0" {
     iosxr_bfd.bfd,
     iosxr_bgp_as_format.bgp_as_format,
     iosxr_bmp_server.bmp_server,
+    iosxr_call_home.call_home,
     iosxr_cdp.cdp,
     iosxr_class_map_qos.class_map_qos,
     iosxr_class_map_traffic.class_map_traffic,
