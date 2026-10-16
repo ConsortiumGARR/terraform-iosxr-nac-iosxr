@@ -1001,6 +1001,7 @@ locals {
           encapsulation_dot1q_second_dot1q             = try(subint.encapsulation_dot1q_second_dot1q, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.encapsulation_dot1q_second_dot1q, null)
           l2transport_encapsulation_dot1q_vlan_id      = try(subint.l2transport.encapsulation_dot1q_vlan, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.l2transport.encapsulation_dot1q_vlan, null)
           l2transport_encapsulation_dot1q_second_dot1q = try(subint.l2transport.encapsulation_dot1q_second_dot1q, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.l2transport.encapsulation_dot1q_second_dot1q, null)
+          l2transport_encapsulation_untagged           = try(subint.l2transport.encapsulation_untagged, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.l2transport.encapsulation_untagged, null)
           rewrite_ingress_tag_pop_one                  = try(subint.rewrite_ingress_tag_pop_one, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.rewrite_ingress_tag_pop_one, null)
           rewrite_ingress_tag_pop_two                  = try(subint.rewrite_ingress_tag_pop_two, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.rewrite_ingress_tag_pop_two, null)
           shutdown                                     = try(subint.shutdown, local.defaults.iosxr.devices.configuration.interfaces.ethernets.subinterfaces.shutdown, null)
@@ -1318,6 +1319,7 @@ resource "iosxr_interface_ethernet_subinterface" "ethernet_subinterface" {
   encapsulation_dot1q_second_dot1q                          = each.value.encapsulation_dot1q_second_dot1q
   l2transport_encapsulation_dot1q_vlan_id                   = each.value.l2transport_encapsulation_dot1q_vlan_id
   l2transport_encapsulation_dot1q_second_dot1q              = each.value.l2transport_encapsulation_dot1q_second_dot1q
+  l2transport_encapsulation_untagged                        = each.value.l2transport_encapsulation_untagged
   rewrite_ingress_tag_pop_one                               = each.value.rewrite_ingress_tag_pop_one
   rewrite_ingress_tag_pop_two                               = each.value.rewrite_ingress_tag_pop_two
   shutdown                                                  = each.value.shutdown
@@ -2121,6 +2123,7 @@ locals {
           encapsulation_dot1q_second_dot1q             = try(subint.encapsulation_dot1q_second_dot1q, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.encapsulation_dot1q_second_dot1q, null)
           l2transport_encapsulation_dot1q_vlan_id      = try(subint.l2transport.encapsulation_dot1q_vlan, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.l2transport.encapsulation_dot1q_vlan, null)
           l2transport_encapsulation_dot1q_second_dot1q = try(subint.l2transport.encapsulation_dot1q_second_dot1q, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.l2transport.encapsulation_dot1q_second_dot1q, null)
+          l2transport_encapsulation_untagged           = try(subint.l2transport.encapsulation_untagged, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.l2transport.encapsulation_untagged, null)
           rewrite_ingress_tag_pop_one                  = try(subint.rewrite_ingress_tag_pop_one, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.rewrite_ingress_tag_pop_one, null)
           rewrite_ingress_tag_pop_two                  = try(subint.rewrite_ingress_tag_pop_two, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.rewrite_ingress_tag_pop_two, null)
           shutdown                                     = try(subint.shutdown, local.defaults.iosxr.devices.configuration.interfaces.bundle_ethernets.subinterfaces.shutdown, null)
@@ -2431,6 +2434,7 @@ resource "iosxr_interface_bundle_ether_subinterface" "bundle_ether_subinterface"
   encapsulation_dot1q_second_dot1q                          = each.value.encapsulation_dot1q_second_dot1q
   l2transport_encapsulation_dot1q_vlan_id                   = each.value.l2transport_encapsulation_dot1q_vlan_id
   l2transport_encapsulation_dot1q_second_dot1q              = each.value.l2transport_encapsulation_dot1q_second_dot1q
+  l2transport_encapsulation_untagged                        = each.value.l2transport_encapsulation_untagged
   rewrite_ingress_tag_pop_one                               = each.value.rewrite_ingress_tag_pop_one
   rewrite_ingress_tag_pop_two                               = each.value.rewrite_ingress_tag_pop_two
   shutdown                                                  = each.value.shutdown
