@@ -9,7 +9,8 @@ locals {
     name     = device.name
     host     = device.host
     protocol = try(device.protocol, null)
-    managed  = try(device.managed, local.defaults.iosxr.devices.managed, true)
+    # Fuori da managed_devices/managed_device_groups → unmanaged: il provider non si connette
+    managed = contains([for d in local.managed_devices : d.name], device.name) && try(device.managed, local.defaults.iosxr.devices.managed, true)
   }]
 
   managed_devices = [
