@@ -752,5 +752,7 @@ resource "iosxr_aaa_authorization" "aaa_authorization" {
       a4_group  = !contains(["local", "none", "tacacs", "radius"], try(item.groups[3], local.defaults.iosxr.devices.configuration.aaa.authorization.network.groups[3], "")) && try(item.groups[3], local.defaults.iosxr.devices.configuration.aaa.authorization.network.groups[3], null) != null ? try(item.groups[3], null) : null
     }
   ]
-  depends_on = [iosxr_aaa.aaa]
+  # Dopo l'authentication: se l'authorization RADIUS arriva prima e l'utente del run
+  # è autenticato in locale, perde i task a metà apply e il device resta bloccato
+  depends_on = [iosxr_aaa.aaa, iosxr_aaa_authentication.aaa_authentication]
 }
