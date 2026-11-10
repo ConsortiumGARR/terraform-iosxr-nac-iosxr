@@ -20,7 +20,12 @@ locals {
     device.name => try(device.configuration, {})
   }
 
-  provider_devices = module.model.devices
+  # Device gestiti per primi: senza host esplicito il provider usa devices[0] come
+  # device di default e ci fa l'auto-detect della versione anche se è unmanaged
+  provider_devices = concat(
+    [for device in module.model.devices : device if device.managed],
+    [for device in module.model.devices : device if !device.managed],
+  )
 
   # IOS-XR >= 25.4 (provider CiscoDevNet PR #323): alcuni attributi cambiano schema YANG.
   # Senza iosxr_version sul device → comportamento 24.4.
